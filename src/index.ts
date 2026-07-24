@@ -76,6 +76,17 @@ app.get("/:code", async (req: Request, res: Response) => {
   res.redirect(302, url);
 });
 
+app.get("/", (_req: Request, res: Response) => {
+  res.json({
+    service: "url-shortener",
+    endpoints: {
+      health: "GET /health",
+      shorten: "POST /shorten",
+      redirect: "GET /:code",
+    },
+  });
+});
+
 async function start(): Promise<void> {
   try {
     await initSchema();
