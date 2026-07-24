@@ -36,7 +36,9 @@ resource "aws_ecs_task_definition" "app" {
 
       environment = [
         { name = "PORT", value = "3000" },
-        { name = "NODE_ENV", value = "production" }
+        { name = "BASE_URL", value = "http://${aws_lb.main.dns_name}" },
+        { name = "NODE_ENV", value = "production" },
+        { name = "REDIS_URL", value = "redis://${aws_elasticache_cluster.main.cache_nodes[0].address}:6379" }
       ]
 
       secrets = [

@@ -2,6 +2,7 @@ import "dotenv/config";
 import express, { Request, Response } from "express";
 import { pool, initSchema } from "./db";
 import { generateCode } from "./code";
+import { getCachedUrl, setCachedUrl } from "./cache";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -55,6 +56,11 @@ app.post("/shorten", async (req: Request, res: Response) => {
 app.get("/:code", async (req: Request, res: Response) => {
   const { code } = req.params;
 
+  const cached = await getCachedUrl(code);
+  if (cached) {
+    return res.redirect(302, cached);
+  }
+
   const result = await pool.query(
     "SELECT original_url FROM links WHERE code = $1",
     [code],
@@ -64,7 +70,10 @@ app.get("/:code", async (req: Request, res: Response) => {
     return res.status(404).json({ error: "Short link not found." });
   }
 
-  res.redirect(302, result.rows[0].original_url);
+  const url = result.rows[0].original_url;
+  await setCachedUrl(code, url);
+
+  res.redirect(302, url);
 });
 
 async function start(): Promise<void> {
