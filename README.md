@@ -4,8 +4,6 @@ A production-shaped URL shortener built to explore infrastructure as code, conta
 
 The application itself is deliberately simple — create a short link, follow it. The interesting parts are everything around it: the infrastructure is defined entirely in Terraform, deploys are automated through GitHub Actions with no stored credentials, and the read path is cached with measured results.
 
-**Live:** `http://url-shortener-alb-123925677.us-east-1.elb.amazonaws.com`
-
 ---
 
 ## Architecture
